@@ -1,0 +1,19 @@
+# Build output
+*.exe
+*.out
+*.o
+bank
+build/
+
+# Runtime-generated data (không nên commit dữ liệu test)
+data.txt
+log.txt
+
+# IDE
+.vscode/
+.idea/
+*.suo
+
+# OS
+.DS_Store
+Thumbs.db

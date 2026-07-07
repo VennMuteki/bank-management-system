@@ -359,7 +359,9 @@ mutex Transaction::logMutex;
 // ================= FILE =================
 void saveToFile(const map<int, unique_ptr<Account>>& accs) {
     ofstream file("data.txt");
-
+if (!file) {
+        cout << "Cannot open file for writing!\n";
+        return;
     for (auto& p : accs) {
         file << p.second->getType() << " "
              << p.second->getID() << " "

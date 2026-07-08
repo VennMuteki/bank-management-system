@@ -71,10 +71,16 @@ public:
         if (from == to) return 1;
 
         if (from == USD && to == VND) return USD_TO_VND;
-        if (from == VND && to == USD) return 1.0 / USD_TO_VND;
+        if (from == VND && to == USD) {
+            if (USD_TO_VND <= 0) return -1; // Ngăn chia cho 0
+            return 1.0 / USD_TO_VND;
+        }
 
         if (from == EUR && to == VND) return EUR_TO_VND;
-        if (from == VND && to == EUR) return 1.0 / EUR_TO_VND;
+        if (from == VND && to == EUR) {
+            if (EUR_TO_VND <= 0) return -1; // Ngăn chia cho 0
+            return 1.0 / EUR_TO_VND;
+        }
 
         if (from == USD && to == EUR) return USD_TO_EUR;
         if (from == EUR && to == USD) return EUR_TO_USD;
@@ -353,7 +359,9 @@ mutex Transaction::logMutex;
 // ================= FILE =================
 void saveToFile(const map<int, unique_ptr<Account>>& accs) {
     ofstream file("data.txt");
-
+if (!file) {
+        cout << "Cannot open file for writing!\n";
+        return;
     for (auto& p : accs) {
         file << p.second->getType() << " "
              << p.second->getID() << " "
@@ -596,7 +604,7 @@ int main() {
 
                     accounts[id]->deposit(amt);
                     
-                    string log = "[DEPOSIT] +" + to_string(amt) + " " +
+                    string log = "[" + getCurrentTime() + "] [DEPOSIT] +" + to_string(amt) + " " +
                      currencyToString(accounts[id]->getCurrency());
 
                     Transaction::addLog(id, log);
@@ -636,7 +644,7 @@ int main() {
                     }
 
                     if (accounts[id]->withdraw(amt)){
-                        string log = "[WITHDRAW] -" + to_string(amt) + " " +
+                        string log = "[" + getCurrentTime() + "] [WITHDRAW] -" + to_string(amt) + " " +
                      currencyToString(accounts[id]->getCurrency());
                         Transaction::addLog(id, log);
 
